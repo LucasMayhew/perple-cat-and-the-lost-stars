@@ -4,7 +4,17 @@ namespace SpriteKind {
     export const rod = SpriteKind.create()
     export const cat1 = SpriteKind.create()
     export const evelcat1 = SpriteKind.create()
+    export const coin = SpriteKind.create()
+    export const blueball = SpriteKind.create()
+    export const Redball = SpriteKind.create()
+    export const bluethingy = SpriteKind.create()
+    export const red_thingy = SpriteKind.create()
 }
+sprites.onOverlap(SpriteKind.Redball, SpriteKind.red_thingy, function (sprite, otherSprite) {
+    sprite.destroy()
+    otherSprite.destroy()
+    info.changeScoreBy(1)
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.rod, function (sprite, otherSprite) {
     sprites.setDataNumber(sprite, "Damage", -1)
     sprites.setDataBoolean(sprite, "magic", true)
@@ -26,6 +36,13 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
         . a . . a . 
         `)
     x = 3
+})
+sprites.onOverlap(SpriteKind.Redball, SpriteKind.bluethingy, function (sprite, otherSprite) {
+    sprite.destroy()
+    otherSprite.destroy()
+    info.changeLifeBy(-1)
+    info.setScore(0)
+    needscore = 5
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (sprites.readDataBoolean(perplecat, "magic")) {
@@ -108,6 +125,27 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         }
         sprites.setDataNumber(projectile, "Damage", sprites.readDataNumber(perplecat, "Damage"))
     }
+    if (sprites.readDataBoolean(perplecat, "beet balls")) {
+        projectile = sprites.createProjectileFromSprite(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . 2 2 2 2 2 2 2 . . . . 
+            . . . . 2 f f f f f f f 2 . . . 
+            . . . . 2 f 2 2 2 2 2 f 2 . . . 
+            . . . . 2 f f f f f 2 f 2 . . . 
+            . . . . 2 f 2 2 2 f 2 f 2 . . . 
+            . . . . 2 f 2 f f f 2 f 2 . . . 
+            . . . . 2 f 2 2 2 2 2 f 2 . . . 
+            . . . . 2 f f f f f f f 2 . . . 
+            . . . . . 2 2 2 2 2 2 2 . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, perplecat, 0, -100)
+        projectile.setKind(SpriteKind.Redball)
+    }
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (perplecat.tileKindAt(TileDirection.Center, myTiles.tile2)) {
@@ -118,6 +156,39 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         _2()
         sprites.setDataBoolean(perplecat, "magic", true)
     }
+    if (perplecat.tileKindAt(TileDirection.Center, myTiles.tile21)) {
+        beet1()
+        sprites.setDataBoolean(perplecat, "beet balls", true)
+        sprites.setDataBoolean(perplecat, "beet move", true)
+        sprites.setDataBoolean(perplecat, "beet 1", true)
+    }
+    if (sprites.readDataBoolean(perplecat, "beet balls")) {
+        projectile = sprites.createProjectileFromSprite(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . 8 8 8 8 8 8 8 . . . . 
+            . . . . 8 f f f f f f f 8 . . . 
+            . . . . 8 f 8 8 8 8 8 f 8 . . . 
+            . . . . 8 f f f f f 8 f 8 . . . 
+            . . . . 8 f 8 8 8 f 8 f 8 . . . 
+            . . . . 8 f 8 f f f 8 f 8 . . . 
+            . . . . 8 f 8 8 8 8 8 f 8 . . . 
+            . . . . 8 f f f f f f f 8 . . . 
+            . . . . . 8 8 8 8 8 8 8 . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, perplecat, 0, -100)
+        projectile.setKind(SpriteKind.blueball)
+    }
+})
+scene.onHitWall(SpriteKind.bluethingy, function (sprite, location) {
+    sprite.destroy()
+    info.changeLifeBy(-1)
+    info.setScore(0)
+    needscore = 5
 })
 function _2 () {
     info.setLife(4)
@@ -225,6 +296,52 @@ function _2 () {
         `, [myTiles.transparency16,sprites.castle.tileGrass1,sprites.castle.tilePath5,sprites.castle.tilePath2,sprites.castle.tilePath8,sprites.builtin.forestTiles22,myTiles.tile13,myTiles.tile15,myTiles.tile14,myTiles.tile16], TileScale.Sixteen)))
     tiles.placeOnTile(perplecat, tiles.getTileLocation(99, 95))
     sprites.setDataBoolean(perplecat, "sand", true)
+    sprites.setDataNumber(perplecat, "Damage", -1)
+}
+function beet1 () {
+    tiles.loadMap(tiles.createMap(tiles.createTilemap(hex`1000100002020202020202020202020202020202020202020202020202020202020202020202020202020101010101020202020202020202020201010101010202020202020202020202010101010102020202020202020202020101010101020202020202020202020201010101010202020202020202020202010101010102020202020202020202020101010101020202020202020202020201010101010202020202020202020202010101010102020202020202020202020101010101020202020202020202020201010101010202020202020202020202010101010102020202020202020202020101010101020202020202020202020201010101010202020202`, img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . 2 2 2 2 2 2 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        . . . . . 2 . . . . . 2 . . . . 
+        `, [myTiles.transparency16,myTiles.tile18,myTiles.tile19], TileScale.Sixteen)))
+    tiles.placeOnTile(perplecat, tiles.getTileLocation(8, 15))
+    controller.moveSprite(perplecat, 0, 0)
+    cramra = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Player)
+    tiles.placeOnTile(cramra, tiles.getTileLocation(8, 15))
+    scene.cameraFollowSprite(cramra)
+    info.setLife(20)
+    info.setScore(0)
+    needscore = 5
 }
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     perplecat.setImage(img`
@@ -242,6 +359,11 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
         . a . . a . 
         `)
     x = 4
+    if (sprites.readDataBoolean(perplecat, "beet move")) {
+        if (!(tiles.tileIsWall(tiles.locationInDirection(tiles.locationOfSprite(perplecat), CollisionDirection.Left)))) {
+            perplecat.x += -16
+        }
+    }
 })
 scene.onOverlapTile(SpriteKind.Player, myTiles.tile11, function (sprite, location) {
     game.splash("Thank you for saving me.", "Timmy the star.")
@@ -249,6 +371,77 @@ scene.onOverlapTile(SpriteKind.Player, myTiles.tile11, function (sprite, locatio
     game.over(true)
 })
 statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
+    mySprite = sprites.create(img`
+        . . b b b b . . 
+        . b 5 5 5 5 b . 
+        b 5 d 3 3 d 5 b 
+        b 5 3 5 5 1 5 b 
+        c 5 3 5 5 1 d c 
+        c d d 1 1 d d c 
+        . f d d d d f . 
+        . . f f f f . . 
+        `, SpriteKind.coin)
+    tiles.placeOnTile(mySprite, tiles.locationOfSprite(status.spriteAttachedTo()))
+    animation.runImageAnimation(
+    mySprite,
+    [img`
+        . . b b b b . . 
+        . b 5 5 5 5 b . 
+        b 5 d 3 3 d 5 b 
+        b 5 3 5 5 1 5 b 
+        c 5 3 5 5 1 d c 
+        c d d 1 1 d d c 
+        . f d d d d f . 
+        . . f f f f . . 
+        `,img`
+        . . b b b . . . 
+        . b 5 5 5 b . . 
+        b 5 d 3 d 5 b . 
+        b 5 3 5 1 5 b . 
+        c 5 3 5 1 d c . 
+        c 5 d 1 d d c . 
+        . f d d d f . . 
+        . . f f f . . . 
+        `,img`
+        . . . b b . . . 
+        . . b 5 5 b . . 
+        . b 5 d 1 5 b . 
+        . b 5 3 1 5 b . 
+        . c 5 3 1 d c . 
+        . c 5 1 d d c . 
+        . . f d d f . . 
+        . . . f f . . . 
+        `,img`
+        . . . b b . . . 
+        . . b 5 5 b . . 
+        . . b 1 1 b . . 
+        . . b 5 5 b . . 
+        . . b d d b . . 
+        . . c d d c . . 
+        . . c 3 3 c . . 
+        . . . f f . . . 
+        `,img`
+        . . . b b . . . 
+        . . b 5 5 b . . 
+        . b 5 1 d 5 b . 
+        . b 5 1 3 5 b . 
+        . c d 1 3 5 c . 
+        . c d d 1 5 c . 
+        . . f d d f . . 
+        . . . f f . . . 
+        `,img`
+        . . . b b b . . 
+        . . b 5 5 5 b . 
+        . b 5 d 3 d 5 b 
+        . b 5 1 5 3 5 b 
+        . c d 1 5 3 5 c 
+        . c d d 1 d 5 c 
+        . . f d d d f . 
+        . . . f f f . . 
+        `],
+    100,
+    true
+    )
     status.spriteAttachedTo().destroy()
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -267,6 +460,11 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
         . a . . a . 
         `)
     x = 1
+    if (sprites.readDataBoolean(perplecat, "beet move")) {
+        if (!(tiles.tileIsWall(tiles.locationInDirection(tiles.locationOfSprite(perplecat), CollisionDirection.Right)))) {
+            perplecat.x += 16
+        }
+    }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.cat1, function (sprite, otherSprite) {
     if (controller.A.isPressed()) {
@@ -367,6 +565,15 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.cat1, function (sprite, otherSpr
         }
     }
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.coin, function (sprite, otherSprite) {
+    otherSprite.destroy()
+    info.changeScoreBy(1)
+})
+sprites.onOverlap(SpriteKind.blueball, SpriteKind.bluethingy, function (sprite, otherSprite) {
+    sprite.destroy()
+    otherSprite.destroy()
+    info.changeScoreBy(1)
+})
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     perplecat.setImage(img`
         a a . . a a 
@@ -390,6 +597,16 @@ scene.onHitWall(SpriteKind.Projectile, function (sprite, location) {
         tiles.setTileAt(location, sprites.castle.tileGrass1)
     }
 })
+function blue (mySprite: Sprite, myImage: Image, num: number, num2: number) {
+    projectile2 = sprites.create(myImage, SpriteKind.bluethingy)
+    tiles.placeOnTile(projectile2, tiles.getTileLocation(num, 2))
+    projectile2.setVelocity(0, num2)
+}
+function red (mySprite: Sprite, myImage: Image, num: number, num2: number) {
+    projectile2 = sprites.create(myImage, SpriteKind.red_thingy)
+    tiles.placeOnTile(projectile2, tiles.getTileLocation(num, 2))
+    projectile2.setVelocity(0, num2)
+}
 sprites.onOverlap(SpriteKind.Player, SpriteKind.star1, function (sprite, otherSprite) {
     if (star) {
         star = false
@@ -400,7 +617,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.star1, function (sprite, otherSp
 })
 function start () {
     star = true
-    tiles.loadMap(tiles.createMap(tiles.createTilemap(hex`1000100002020202020202020202020202020202020201020302020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202`, img`
+    tiles.loadMap(tiles.createMap(tiles.createTilemap(hex`1000100002020202020202020606060606060606020201020302020207070704070707070202020202020202050805050505050502020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202`, img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -417,7 +634,7 @@ function start () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        `, [myTiles.transparency16,myTiles.tile2,myTiles.tile3,myTiles.tile12], TileScale.Sixteen)))
+        `, [myTiles.transparency16,myTiles.tile2,myTiles.tile3,myTiles.tile12,myTiles.tile17,myTiles.tile18,myTiles.tile19,myTiles.tile20,myTiles.tile21], TileScale.Sixteen)))
     perplecat = sprites.create(img`
         a a . . a a 
         a a . . a a 
@@ -436,8 +653,18 @@ function start () {
     sprites.setDataBoolean(perplecat, "go", false)
     sprites.setDataBoolean(perplecat, "magic", false)
     sprites.setDataBoolean(perplecat, "sand", false)
+    sprites.setDataBoolean(perplecat, "beet balls", false)
+    sprites.setDataBoolean(perplecat, "beet move", false)
+    sprites.setDataBoolean(perplecat, "beet 1", false)
     scene.cameraFollowSprite(perplecat)
 }
+sprites.onOverlap(SpriteKind.blueball, SpriteKind.red_thingy, function (sprite, otherSprite) {
+    sprite.destroy()
+    otherSprite.destroy()
+    info.changeLifeBy(-1)
+    info.setScore(0)
+    needscore = 5
+})
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.floorMixed, function (sprite, location) {
     for (let value of tiles.getTilesByType(sprites.dungeon.floorMixed)) {
         tiles.setTileAt(value, sprites.dungeon.floorDark2)
@@ -488,6 +715,12 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.floorMixed, function (spr
         statusbar.value = 5
         tiles.placeOnTile(myEnemy, value)
     }
+})
+scene.onHitWall(SpriteKind.red_thingy, function (sprite, location) {
+    sprite.destroy()
+    info.changeLifeBy(-1)
+    info.setScore(0)
+    needscore = 5
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     statusbars.getStatusBarAttachedTo(StatusBarKind.EnemyHealth, otherSprite).value += sprites.readDataNumber(sprite, "Damage")
@@ -582,7 +815,7 @@ function _1 () {
         ....................................222222...2222222..222222
         222222222222222222222222222222222222222222...2222222..222222
         222222222222222222222222222222222222222222...2222222..222222
-        `, [myTiles.transparency16,sprites.builtin.forestTiles2,sprites.castle.tileGrass1,sprites.castle.tileGrass2,myTiles.tile6,sprites.builtin.forestTiles21,sprites.builtin.forestTiles23,myTiles.tile7,myTiles.tile9,myTiles.tile10,myTiles.tile4,sprites.dungeon.floorLight2,sprites.dungeon.greenOuterNorthWest,sprites.dungeon.floorDarkDiamond,sprites.dungeon.greenOuterNorth0,sprites.dungeon.greenOuterNorthEast,sprites.dungeon.greenOuterEast0,sprites.dungeon.greenOuterWest0,sprites.dungeon.floorDark2,sprites.dungeon.floorDark0,sprites.dungeon.floorMixed,sprites.builtin.forestTiles22,sprites.dungeon.greenOuterWest1,sprites.dungeon.greenOuterSouthEast,sprites.dungeon.greenOuterSouth0,sprites.dungeon.greenInnerSouthWest,sprites.dungeon.greenOuterSouthWest,sprites.dungeon.floorLight3,myTiles.tile11], TileScale.Sixteen)))
+        `, [myTiles.transparency16,sprites.builtin.forestTiles2,sprites.castle.tileGrass1,sprites.castle.tileGrass2,myTiles.tile6,sprites.builtin.forestTiles21,sprites.builtin.forestTiles23,myTiles.tile7,myTiles.tile9,myTiles.tile10,myTiles.tile4,sprites.dungeon.floorLight2,sprites.dungeon.greenOuterNorthWest,sprites.dungeon.floorDarkDiamond,sprites.dungeon.greenOuterNorth0,sprites.dungeon.greenOuterNorthEast,sprites.dungeon.greenOuterEast0,sprites.dungeon.greenOuterWest0,sprites.dungeon.floorDark2,sprites.dungeon.floorDark0,sprites.dungeon.floorMixed,sprites.builtin.forestTiles22,sprites.dungeon.greenOuterWest1,sprites.dungeon.greenOuterSouthEast,sprites.dungeon.greenOuterSouth0,sprites.dungeon.greenInnerSouthWest,sprites.dungeon.greenOuterSouthWest,sprites.dungeon.floorLight3,myTiles.tile11,myTiles.tile22], TileScale.Sixteen)))
     for (let value of tiles.getTilesByType(myTiles.tile6)) {
         tiles.setTileAt(value, img`
             7 7 7 7 7 7 6 6 6 6 7 7 7 7 7 7 
@@ -660,149 +893,665 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
     info.changeLifeBy(-1)
     music.powerDown.playUntilDone()
 })
+let cunttilemapthingy = 0
 let cat: Sprite = null
 let therod: Sprite = null
 let thestare: Sprite = null
 let statusbar: StatusBarSprite = null
 let myEnemy: Sprite = null
 let star = false
+let projectile2: Sprite = null
+let mySprite: Sprite = null
+let cramra: Sprite = null
 let projectile: Sprite = null
+let needscore = 0
 let x = 0
 let perplecat: Sprite = null
 start()
 game.onUpdateInterval(1000, function () {
     if (sprites.readDataBoolean(perplecat, "sand")) {
-        myEnemy = sprites.create(img`
-            f f . . f f 
-            f f . . f f 
-            f f f f f f 
-            b 2 b b 2 b 
-            f f f f f f 
-            . f f f f . 
-            f f f f f f 
-            f f f f f f 
-            f f f f f f 
-            f f f f f f 
-            . f f f f . 
-            . f . . f . 
-            `, SpriteKind.Enemy)
-        animation.runImageAnimation(
-        myEnemy,
-        [img`
-            . . . . . . . . . . . c c . . . 
-            . . . . . . . c c c c 6 3 c . . 
-            . . . . . . c 6 3 3 3 3 6 c . . 
-            . . c c . c 6 c c 3 3 3 3 3 c . 
-            . b 5 5 c 6 c 5 5 c 3 3 3 3 3 c 
-            . 2 5 5 c 6 c 5 5 2 3 3 3 3 3 c 
-            . 2 2 5 c 6 c 5 2 2 6 3 3 3 c c 
-            . b 5 5 3 c 3 5 5 c 6 6 6 6 c c 
-            . . b 5 5 3 5 5 c 3 3 3 3 3 3 c 
-            . . c 5 5 5 5 b c c 3 3 3 3 3 c 
-            . . c 4 5 5 4 b 5 5 c 3 3 3 c . 
-            . c 5 b 4 4 b b 5 c c b b b . . 
-            . c 4 4 b 5 5 5 4 c 4 4 4 5 b . 
-            . c 5 4 c 5 5 5 c 4 4 4 c 5 c . 
-            . c 5 c 5 5 5 5 c 4 4 4 c c c . 
-            . . c c c c c c c . . . . . . . 
-            `,img`
-            . . . . . . . . . . . c c . . . 
-            . . . . . . . c c c c 6 3 c . . 
-            . . . . . . c 6 3 3 3 3 6 c . . 
-            . . c c . c 6 c c 3 3 3 3 3 c . 
-            . b 5 5 c 6 c 5 5 c 3 3 3 3 3 c 
-            . 2 5 5 c 6 c 5 5 2 3 3 3 3 3 c 
-            . 2 2 5 c 6 c 5 2 2 6 3 3 3 c c 
-            . b 5 5 3 c 3 5 5 c 6 6 6 6 c c 
-            . . b 5 5 3 5 5 c 3 3 3 3 3 3 c 
-            . c c 5 5 5 5 5 b c c 3 3 3 3 c 
-            c 5 5 4 5 5 5 4 b 5 5 c 3 3 c . 
-            b 5 4 b 4 4 4 4 b b 5 c b b . . 
-            c 4 5 5 b 4 b 5 5 5 4 c 4 5 b . 
-            c 5 5 5 c 4 c 5 5 5 c 4 c 5 c . 
-            c 5 5 5 5 c 5 5 5 5 c 4 c 5 c . 
-            . c c c c c c c c c . . c c c . 
-            `,img`
-            . . . . . . . . . . . c c . . . 
-            . . . . . . . c c c c 6 3 c . . 
-            . . . . . . c 6 3 3 3 3 6 c . . 
-            . . c c . c 6 c c 3 3 3 3 3 c . 
-            . b 5 5 c 6 c 5 5 c 3 3 3 3 3 c 
-            . 2 5 5 c 6 c 5 5 2 3 3 3 3 3 c 
-            . 2 2 5 c 6 c 5 2 2 6 3 3 3 c c 
-            . b 5 5 3 c 3 5 5 c 6 6 6 6 c c 
-            . . b 5 5 3 5 5 c 3 3 3 3 3 3 c 
-            . . c 5 5 5 5 b c c 3 3 3 3 3 c 
-            . . c 4 5 5 4 b 5 5 c 3 3 3 c . 
-            . c 5 b 4 4 b b 5 c c b b b . . 
-            . c 4 4 b 5 5 5 4 c 4 4 4 5 b . 
-            . c 5 4 c 5 5 5 c 4 4 4 c 5 c . 
-            . c 5 c 5 5 5 5 c 4 4 4 c c c . 
-            . . c c c c c c c . . . . . . . 
-            `,img`
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . c c . . . . 
-            . . . . . . c c c c 6 3 c . . . 
-            . . . . . c 6 6 3 3 3 6 c . . . 
-            . . . . c 6 6 3 3 3 3 3 3 c . . 
-            b c c c 6 6 c c 3 3 3 3 3 3 c . 
-            b 5 5 c 6 c 5 5 c 3 3 3 3 3 c . 
-            2 5 5 c 6 c 5 5 2 6 3 3 3 c c . 
-            2 2 5 c c c 5 2 2 6 6 6 6 c c . 
-            . b 5 5 3 5 5 c 3 3 3 3 3 3 c . 
-            . c 5 5 5 5 4 c c c 3 3 3 3 c . 
-            . c 4 5 5 4 4 b 5 5 c 3 3 c . . 
-            . c 5 b 4 4 b b 5 c b b c . . . 
-            . c c 5 4 c 5 5 5 c c 5 c . . . 
-            . . . c c 5 5 5 5 c c c c . . . 
-            . . . . c c c c c c . . . . . . 
-            `,img`
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . c c . . . 
-            . . . . . . . c c c c 6 3 c . . 
-            . . . . . . c 6 6 3 3 3 6 c . . 
-            . . . . . c 6 6 3 3 3 3 3 3 c . 
-            . b c c c 6 6 c c 3 3 3 3 3 3 c 
-            . b 5 5 c 6 c 5 5 c 3 3 3 3 3 c 
-            . 2 5 5 c 6 c 5 5 2 6 3 3 3 c c 
-            . 2 2 5 c c c 5 2 2 6 6 6 6 c c 
-            . . b 5 5 3 5 5 c c c 3 3 3 3 c 
-            . . c 5 5 5 5 5 b 5 5 c 3 3 3 c 
-            . c 4 4 5 5 4 4 b b 5 c 3 3 c . 
-            . c 5 5 b 4 4 4 b 5 5 5 b c . . 
-            . c 5 5 5 4 4 4 c 5 5 5 c b . . 
-            . . c c c c 4 c 5 5 5 5 c c . . 
-            . . . . c c c c c c c c c c . . 
-            `,img`
-            . . . . . . . . . . . c c . . . 
-            . . . . . . . c c c c 6 3 c . . 
-            . . . . . . c 6 3 3 3 3 6 c . . 
-            . . c c . c 6 c c 3 3 3 3 3 c . 
-            . b 5 5 c 6 c 5 5 c 3 3 3 3 3 c 
-            . 2 5 5 c 6 c 5 5 2 3 3 3 3 3 c 
-            . 2 2 5 c 6 c 5 2 2 6 3 3 3 c c 
-            . b 5 5 3 c 3 5 5 c 6 6 6 6 c c 
-            . . b 5 5 3 5 5 c 3 3 3 3 3 3 c 
-            . c c 5 5 5 5 4 c c 3 3 3 3 3 c 
-            c 5 5 4 5 5 4 c 5 5 c 3 3 3 c . 
-            b 5 4 b 4 4 4 c 5 5 5 b c c . . 
-            c 4 5 5 b 4 4 c 5 5 5 c b b . . 
-            c 5 5 5 c 4 c 5 5 5 5 c c 5 b . 
-            c 5 5 5 5 c 4 c c c c c c 5 c . 
-            . c c c c c c . . . . . c c c . 
-            `],
-        200,
-        true
-        )
-        sprites.setDataNumber(myEnemy, "speed", 100)
-        myEnemy.follow(perplecat, sprites.readDataNumber(myEnemy, "speed"))
-        tiles.placeOnRandomTile(myEnemy, myTiles.tile16)
-        statusbar = statusbars.create(20, 2, StatusBarKind.EnemyHealth)
-        statusbar.max = 5
+        if (Math.percentChance(50)) {
+            myEnemy = sprites.create(img`
+                f f . . f f 
+                f f . . f f 
+                f f f f f f 
+                b 2 b b 2 b 
+                f f f f f f 
+                . f f f f . 
+                f f f f f f 
+                f f f f f f 
+                f f f f f f 
+                f f f f f f 
+                . f f f f . 
+                . f . . f . 
+                `, SpriteKind.Enemy)
+            animation.runImageAnimation(
+            myEnemy,
+            [img`
+                . . . . . . . . . . . c c . . . 
+                . . . . . . . c c c c 6 3 c . . 
+                . . . . . . c 6 3 3 3 3 6 c . . 
+                . . c c . c 6 c c 3 3 3 3 3 c . 
+                . b 5 5 c 6 c 5 5 c 3 3 3 3 3 c 
+                . 2 5 5 c 6 c 5 5 2 3 3 3 3 3 c 
+                . 2 2 5 c 6 c 5 2 2 6 3 3 3 c c 
+                . b 5 5 3 c 3 5 5 c 6 6 6 6 c c 
+                . . b 5 5 3 5 5 c 3 3 3 3 3 3 c 
+                . . c 5 5 5 5 b c c 3 3 3 3 3 c 
+                . . c 4 5 5 4 b 5 5 c 3 3 3 c . 
+                . c 5 b 4 4 b b 5 c c b b b . . 
+                . c 4 4 b 5 5 5 4 c 4 4 4 5 b . 
+                . c 5 4 c 5 5 5 c 4 4 4 c 5 c . 
+                . c 5 c 5 5 5 5 c 4 4 4 c c c . 
+                . . c c c c c c c . . . . . . . 
+                `,img`
+                . . . . . . . . . . . c c . . . 
+                . . . . . . . c c c c 6 3 c . . 
+                . . . . . . c 6 3 3 3 3 6 c . . 
+                . . c c . c 6 c c 3 3 3 3 3 c . 
+                . b 5 5 c 6 c 5 5 c 3 3 3 3 3 c 
+                . 2 5 5 c 6 c 5 5 2 3 3 3 3 3 c 
+                . 2 2 5 c 6 c 5 2 2 6 3 3 3 c c 
+                . b 5 5 3 c 3 5 5 c 6 6 6 6 c c 
+                . . b 5 5 3 5 5 c 3 3 3 3 3 3 c 
+                . c c 5 5 5 5 5 b c c 3 3 3 3 c 
+                c 5 5 4 5 5 5 4 b 5 5 c 3 3 c . 
+                b 5 4 b 4 4 4 4 b b 5 c b b . . 
+                c 4 5 5 b 4 b 5 5 5 4 c 4 5 b . 
+                c 5 5 5 c 4 c 5 5 5 c 4 c 5 c . 
+                c 5 5 5 5 c 5 5 5 5 c 4 c 5 c . 
+                . c c c c c c c c c . . c c c . 
+                `,img`
+                . . . . . . . . . . . c c . . . 
+                . . . . . . . c c c c 6 3 c . . 
+                . . . . . . c 6 3 3 3 3 6 c . . 
+                . . c c . c 6 c c 3 3 3 3 3 c . 
+                . b 5 5 c 6 c 5 5 c 3 3 3 3 3 c 
+                . 2 5 5 c 6 c 5 5 2 3 3 3 3 3 c 
+                . 2 2 5 c 6 c 5 2 2 6 3 3 3 c c 
+                . b 5 5 3 c 3 5 5 c 6 6 6 6 c c 
+                . . b 5 5 3 5 5 c 3 3 3 3 3 3 c 
+                . . c 5 5 5 5 b c c 3 3 3 3 3 c 
+                . . c 4 5 5 4 b 5 5 c 3 3 3 c . 
+                . c 5 b 4 4 b b 5 c c b b b . . 
+                . c 4 4 b 5 5 5 4 c 4 4 4 5 b . 
+                . c 5 4 c 5 5 5 c 4 4 4 c 5 c . 
+                . c 5 c 5 5 5 5 c 4 4 4 c c c . 
+                . . c c c c c c c . . . . . . . 
+                `,img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . c c . . . . 
+                . . . . . . c c c c 6 3 c . . . 
+                . . . . . c 6 6 3 3 3 6 c . . . 
+                . . . . c 6 6 3 3 3 3 3 3 c . . 
+                b c c c 6 6 c c 3 3 3 3 3 3 c . 
+                b 5 5 c 6 c 5 5 c 3 3 3 3 3 c . 
+                2 5 5 c 6 c 5 5 2 6 3 3 3 c c . 
+                2 2 5 c c c 5 2 2 6 6 6 6 c c . 
+                . b 5 5 3 5 5 c 3 3 3 3 3 3 c . 
+                . c 5 5 5 5 4 c c c 3 3 3 3 c . 
+                . c 4 5 5 4 4 b 5 5 c 3 3 c . . 
+                . c 5 b 4 4 b b 5 c b b c . . . 
+                . c c 5 4 c 5 5 5 c c 5 c . . . 
+                . . . c c 5 5 5 5 c c c c . . . 
+                . . . . c c c c c c . . . . . . 
+                `,img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . c c . . . 
+                . . . . . . . c c c c 6 3 c . . 
+                . . . . . . c 6 6 3 3 3 6 c . . 
+                . . . . . c 6 6 3 3 3 3 3 3 c . 
+                . b c c c 6 6 c c 3 3 3 3 3 3 c 
+                . b 5 5 c 6 c 5 5 c 3 3 3 3 3 c 
+                . 2 5 5 c 6 c 5 5 2 6 3 3 3 c c 
+                . 2 2 5 c c c 5 2 2 6 6 6 6 c c 
+                . . b 5 5 3 5 5 c c c 3 3 3 3 c 
+                . . c 5 5 5 5 5 b 5 5 c 3 3 3 c 
+                . c 4 4 5 5 4 4 b b 5 c 3 3 c . 
+                . c 5 5 b 4 4 4 b 5 5 5 b c . . 
+                . c 5 5 5 4 4 4 c 5 5 5 c b . . 
+                . . c c c c 4 c 5 5 5 5 c c . . 
+                . . . . c c c c c c c c c c . . 
+                `,img`
+                . . . . . . . . . . . c c . . . 
+                . . . . . . . c c c c 6 3 c . . 
+                . . . . . . c 6 3 3 3 3 6 c . . 
+                . . c c . c 6 c c 3 3 3 3 3 c . 
+                . b 5 5 c 6 c 5 5 c 3 3 3 3 3 c 
+                . 2 5 5 c 6 c 5 5 2 3 3 3 3 3 c 
+                . 2 2 5 c 6 c 5 2 2 6 3 3 3 c c 
+                . b 5 5 3 c 3 5 5 c 6 6 6 6 c c 
+                . . b 5 5 3 5 5 c 3 3 3 3 3 3 c 
+                . c c 5 5 5 5 4 c c 3 3 3 3 3 c 
+                c 5 5 4 5 5 4 c 5 5 c 3 3 3 c . 
+                b 5 4 b 4 4 4 c 5 5 5 b c c . . 
+                c 4 5 5 b 4 4 c 5 5 5 c b b . . 
+                c 5 5 5 c 4 c 5 5 5 5 c c 5 b . 
+                c 5 5 5 5 c 4 c c c c c c 5 c . 
+                . c c c c c c . . . . . c c c . 
+                `],
+            200,
+            true
+            )
+            statusbar = statusbars.create(20, 2, StatusBarKind.EnemyHealth)
+            statusbar.attachToSprite(myEnemy)
+            statusbar.max = 2
+            statusbar.value = 2
+            sprites.setDataNumber(myEnemy, "speed", 50)
+            myEnemy.follow(perplecat, sprites.readDataNumber(myEnemy, "speed"))
+            tiles.placeOnRandomTile(myEnemy, myTiles.tile16)
+        }
     }
 })
 game.onUpdateInterval(1000, function () {
     if (star && sprites.readDataBoolean(perplecat, "go")) {
         story.spriteSayText(thestare, "help", 15, 1)
+    }
+})
+forever(function () {
+    if (sprites.readDataBoolean(perplecat, "beet balls")) {
+        if (info.score() >= needscore) {
+            needscore += 5
+            info.changeLifeBy(1)
+        }
+    }
+})
+forever(function () {
+    if (sprites.readDataBoolean(perplecat, "beet 1")) {
+        for (let index = 0; index < 4; index++) {
+            blue(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playTone(659, music.beat(BeatFraction.Half))
+            pause(500)
+            red(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playTone(587, music.beat(BeatFraction.Half))
+            pause(500)
+        }
+        cunttilemapthingy = 5
+        for (let index = 0; index < 5; index++) {
+            cunttilemapthingy += 1
+            red(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f f f f f f f f f f f f f f f f 
+                `, cunttilemapthingy, 100)
+            music.playTone(349, music.beat(BeatFraction.Half))
+            pause(100)
+        }
+        pause(1000)
+        cunttilemapthingy = 11
+        for (let index = 0; index < 5; index++) {
+            cunttilemapthingy += -1
+            blue(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f f f f f f f f f f f f f f f f 
+                `, cunttilemapthingy, 100)
+            music.playTone(349, music.beat(BeatFraction.Half))
+            pause(100)
+        }
+        red(perplecat, img`
+            f f f f f f f f f f f f f f f f 
+            f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+            f 2 f f f f f f f f f f f f 2 f 
+            f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+            f 2 f 2 f f f f f f f f 2 f 2 f 
+            f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+            f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+            f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+            f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+            f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+            f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+            f 2 f 2 f f f f f f f f 2 f 2 f 
+            f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+            f 2 f f f f f f f f f f f f 2 f 
+            f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+            f f f f f f f f f f f f f f f f 
+            `, 6, 100)
+        music.playTone(131, music.beat(BeatFraction.Half))
+        pause(500)
+        blue(perplecat, img`
+            f f f f f f f f f f f f f f f f 
+            f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+            f 8 f f f f f f f f f f f f 8 f 
+            f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+            f 8 f 8 f f f f f f f f 8 f 8 f 
+            f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+            f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+            f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+            f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+            f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+            f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+            f 8 f 8 f f f f f f f f 8 f 8 f 
+            f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+            f 8 f f f f f f f f f f f f 8 f 
+            f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+            f f f f f f f f f f f f f f f f 
+            `, 10, 100)
+        music.playTone(147, music.beat(BeatFraction.Half))
+        pause(500)
+        for (let index = 0; index < 4; index++) {
+            red(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playTone(523, music.beat(BeatFraction.Half))
+            pause(100)
+            blue(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playTone(294, music.beat(BeatFraction.Half))
+            pause(100)
+        }
+        for (let index = 0; index < 4; index++) {
+            red(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("C D C D C D C D ", 500)
+            blue(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("D E D E D E D E ", 500)
+            red(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("E F E F E F E F ", 500)
+            blue(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("F G F G F G F G ", 500)
+            red(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("G A G A G A G A ", 500)
+            blue(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("A B A B A B A B ", 500)
+            red(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("B C5 B C5 B C5 B C5 ", 500)
+            blue(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("A B A B A B A B ", 500)
+            red(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("G A G A G A G A ", 500)
+            blue(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("F G F G F G F G ", 500)
+            red(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("E F E F E F E F ", 500)
+            blue(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("D E D E D E D E ", 500)
+            red(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f 2 2 f 2 f 2 f 2 f 
+                f 2 f 2 f 2 f f f f 2 f 2 f 2 f 
+                f 2 f 2 f 2 2 2 2 2 2 f 2 f 2 f 
+                f 2 f 2 f f f f f f f f 2 f 2 f 
+                f 2 f 2 2 2 2 2 2 2 2 2 2 f 2 f 
+                f 2 f f f f f f f f f f f f 2 f 
+                f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
+                f f f f f f f f f f f f f f f f 
+                `, randint(6, 10), 100)
+            music.playMelody("C D C D C D C D ", 500)
+        }
+        cunttilemapthingy = 11
+        for (let index = 0; index < 5; index++) {
+            cunttilemapthingy += -1
+            blue(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f f f f f f f f f f f f f f f f 
+                `, cunttilemapthingy, 100)
+            music.playTone(349, music.beat(BeatFraction.Half))
+            pause(100)
+        }
+        cunttilemapthingy = 5
+        for (let index = 0; index < 5; index++) {
+            cunttilemapthingy += 1
+            blue(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f f f f f f f f f f f f f f f f 
+                `, cunttilemapthingy, 100)
+            music.playTone(349, music.beat(BeatFraction.Half))
+            pause(100)
+        }
+        cunttilemapthingy = 8
+        for (let index = 0; index < 20; index++) {
+            cunttilemapthingy += 0
+            blue(perplecat, img`
+                f f f f f f f f f f f f f f f f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f 8 8 f 8 f 8 f 8 f 
+                f 8 f 8 f 8 f f f f 8 f 8 f 8 f 
+                f 8 f 8 f 8 8 8 8 8 8 f 8 f 8 f 
+                f 8 f 8 f f f f f f f f 8 f 8 f 
+                f 8 f 8 8 8 8 8 8 8 8 8 8 f 8 f 
+                f 8 f f f f f f f f f f f f 8 f 
+                f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
+                f f f f f f f f f f f f f f f f 
+                `, cunttilemapthingy, 100)
+            music.playTone(349, music.beat(BeatFraction.Half))
+            pause(100)
+        }
+        game.over(true)
     }
 })
