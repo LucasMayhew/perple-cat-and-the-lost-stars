@@ -162,6 +162,13 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         sprites.setDataBoolean(perplecat, "beet move", true)
         sprites.setDataBoolean(perplecat, "beet 1", true)
     }
+    if (perplecat.tileKindAt(TileDirection.Center, myTiles.tile27)) {
+        p2_beet1()
+        sprites.setDataBoolean(perplecat, "beet balls", true)
+        sprites.setDataBoolean(perplecat, "beet move", true)
+        sprites.setDataBoolean(perplecat, "beet 1", true)
+        sprites.setDataBoolean(perplecat, "2players", true)
+    }
     if (sprites.readDataBoolean(perplecat, "beet balls")) {
         projectile = sprites.createProjectileFromSprite(img`
             . . . . . . . . . . . . . . . . 
@@ -597,15 +604,37 @@ scene.onHitWall(SpriteKind.Projectile, function (sprite, location) {
         tiles.setTileAt(location, sprites.castle.tileGrass1)
     }
 })
-function blue (mySprite: Sprite, myImage: Image, num: number, num2: number) {
+function blue (mySprite: Sprite, myImage: Image, num: number, num2: number, true_r: boolean) {
     projectile2 = sprites.create(myImage, SpriteKind.bluethingy)
     tiles.placeOnTile(projectile2, tiles.getTileLocation(num, 2))
     projectile2.setVelocity(0, num2)
+    if (sprites.readDataBoolean(mySprite, "2players")) {
+        for (let index = 0; index < 3; index++) {
+            projectile2.x += 16
+        }
+        if (true_r) {
+            tiles.placeOnTile(projectile2, tiles.getTileLocation(randint(9, 12), 2))
+        }
+        if (tiles.tileIsWall(tiles.locationOfSprite(projectile2))) {
+            projectile2.destroy()
+        }
+    }
 }
-function red (mySprite: Sprite, myImage: Image, num: number, num2: number) {
+function red (mySprite: Sprite, myImage: Image, num: number, num2: number, bool: boolean) {
     projectile2 = sprites.create(myImage, SpriteKind.red_thingy)
     tiles.placeOnTile(projectile2, tiles.getTileLocation(num, 2))
     projectile2.setVelocity(0, num2)
+    if (sprites.readDataBoolean(mySprite, "2players")) {
+        for (let index = 0; index < 3; index++) {
+            projectile2.x += 16
+        }
+        if (bool) {
+            tiles.placeOnTile(projectile2, tiles.getTileLocation(randint(9, 12), 2))
+        }
+        if (tiles.tileIsWall(tiles.locationOfSprite(projectile2))) {
+            projectile2.destroy()
+        }
+    }
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.star1, function (sprite, otherSprite) {
     if (star) {
@@ -617,7 +646,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.star1, function (sprite, otherSp
 })
 function start () {
     star = true
-    tiles.loadMap(tiles.createMap(tiles.createTilemap(hex`1000100002020202020202020606060606060606020201020302020207070704070707070202020202020202050805050505050502020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202`, img`
+    tiles.loadMap(tiles.createMap(tiles.createTilemap(hex`1000100002020202020202020609060606060606020201020302020207070704070707070202020202020202050805050505050502020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202`, img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -634,7 +663,7 @@ function start () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        `, [myTiles.transparency16,myTiles.tile2,myTiles.tile3,myTiles.tile12,myTiles.tile17,myTiles.tile18,myTiles.tile19,myTiles.tile20,myTiles.tile21], TileScale.Sixteen)))
+        `, [myTiles.transparency16,myTiles.tile2,myTiles.tile3,myTiles.tile12,myTiles.tile17,myTiles.tile18,myTiles.tile19,myTiles.tile20,myTiles.tile21,myTiles.tile27], TileScale.Sixteen)))
     perplecat = sprites.create(img`
         a a . . a a 
         a a . . a a 
@@ -657,6 +686,7 @@ function start () {
     sprites.setDataBoolean(perplecat, "beet move", false)
     sprites.setDataBoolean(perplecat, "beet 1", false)
     scene.cameraFollowSprite(perplecat)
+    sprites.setDataBoolean(perplecat, "2players", false)
 }
 sprites.onOverlap(SpriteKind.blueball, SpriteKind.red_thingy, function (sprite, otherSprite) {
     sprite.destroy()
@@ -722,6 +752,64 @@ scene.onHitWall(SpriteKind.red_thingy, function (sprite, location) {
     info.setScore(0)
     needscore = 5
 })
+function p2_beet1 () {
+    tiles.loadMap(tiles.createMap(tiles.createTilemap(hex`1000100001010101010101010502020202020202010101010101010105020202020202020101010104040404050303030302020201010101040404040503030303020202010101010404040405030303030202020101010104040404050303030302020201010101040404040503030303020202010101010404040405030303030202020101010104040404050303030302020201010101040404040503030303020202010101010404040405030303030202020101010104040404050303030302020201010101040404040503030303020202010101010404040405030303030202020101010104040404050303030302020201010101040404040503030303020202`, img`
+        . . . . . . . . . . . . . . . . 
+        . . 2 2 2 2 2 2 2 2 2 2 2 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        . . 2 2 . . . . 2 . . . . 2 2 . 
+        `, [myTiles.transparency16,myTiles.tile18,myTiles.tile19,myTiles.tile28,myTiles.tile30,myTiles.tile32], TileScale.Sixteen)))
+    sinmincat = sprites.create(img`
+        4 4 . . 4 4 
+        4 4 . . 4 4 
+        4 4 4 4 4 4 
+        4 f 4 4 f 4 
+        4 f 4 4 f 4 
+        . 4 4 4 4 . 
+        4 4 4 4 4 4 
+        4 4 1 1 4 4 
+        4 4 1 1 4 4 
+        4 4 1 1 4 4 
+        . 4 4 4 4 . 
+        . 4 . . 4 . 
+        `, SpriteKind.Player)
+    cramra = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Player)
+    sprites.setDataNumber(sinmincat, "need", 5)
+    tiles.placeOnTile(cramra, tiles.getTileLocation(8, 13))
+    scene.cameraFollowSprite(cramra)
+    tiles.placeOnTile(perplecat, tiles.getTileLocation(10, 15))
+    controller.moveSprite(sinmincat, 0, 0)
+    controller.moveSprite(perplecat, 0, 0)
+}
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     statusbars.getStatusBarAttachedTo(StatusBarKind.EnemyHealth, otherSprite).value += sprites.readDataNumber(sprite, "Damage")
     sprite.destroy()
@@ -897,6 +985,7 @@ let cunttilemapthingy = 0
 let cat: Sprite = null
 let therod: Sprite = null
 let thestare: Sprite = null
+let sinmincat: Sprite = null
 let statusbar: StatusBarSprite = null
 let myEnemy: Sprite = null
 let star = false
@@ -1076,7 +1165,7 @@ forever(function () {
                 f 8 f f f f f f f f f f f f 8 f 
                 f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playTone(659, music.beat(BeatFraction.Half))
             pause(500)
             red(perplecat, img`
@@ -1096,7 +1185,7 @@ forever(function () {
                 f 2 f f f f f f f f f f f f 2 f 
                 f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playTone(587, music.beat(BeatFraction.Half))
             pause(500)
         }
@@ -1120,7 +1209,7 @@ forever(function () {
                 f 2 f f f f f f f f f f f f 2 f 
                 f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
                 f f f f f f f f f f f f f f f f 
-                `, cunttilemapthingy, 100)
+                `, cunttilemapthingy, 100, false)
             music.playTone(349, music.beat(BeatFraction.Half))
             pause(100)
         }
@@ -1145,7 +1234,7 @@ forever(function () {
                 f 8 f f f f f f f f f f f f 8 f 
                 f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
                 f f f f f f f f f f f f f f f f 
-                `, cunttilemapthingy, 100)
+                `, cunttilemapthingy, 100, false)
             music.playTone(349, music.beat(BeatFraction.Half))
             pause(100)
         }
@@ -1166,7 +1255,7 @@ forever(function () {
             f 2 f f f f f f f f f f f f 2 f 
             f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
             f f f f f f f f f f f f f f f f 
-            `, 6, 100)
+            `, 6, 100, false)
         music.playTone(131, music.beat(BeatFraction.Half))
         pause(500)
         blue(perplecat, img`
@@ -1186,7 +1275,7 @@ forever(function () {
             f 8 f f f f f f f f f f f f 8 f 
             f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
             f f f f f f f f f f f f f f f f 
-            `, 10, 100)
+            `, 10, 100, false)
         music.playTone(147, music.beat(BeatFraction.Half))
         pause(500)
         for (let index = 0; index < 4; index++) {
@@ -1207,7 +1296,7 @@ forever(function () {
                 f 2 f f f f f f f f f f f f 2 f 
                 f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playTone(523, music.beat(BeatFraction.Half))
             pause(100)
             blue(perplecat, img`
@@ -1227,7 +1316,7 @@ forever(function () {
                 f 8 f f f f f f f f f f f f 8 f 
                 f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playTone(294, music.beat(BeatFraction.Half))
             pause(100)
         }
@@ -1249,7 +1338,7 @@ forever(function () {
                 f 2 f f f f f f f f f f f f 2 f 
                 f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("C D C D C D C D ", 500)
             blue(perplecat, img`
                 f f f f f f f f f f f f f f f f 
@@ -1268,7 +1357,7 @@ forever(function () {
                 f 8 f f f f f f f f f f f f 8 f 
                 f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("D E D E D E D E ", 500)
             red(perplecat, img`
                 f f f f f f f f f f f f f f f f 
@@ -1287,7 +1376,7 @@ forever(function () {
                 f 2 f f f f f f f f f f f f 2 f 
                 f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("E F E F E F E F ", 500)
             blue(perplecat, img`
                 f f f f f f f f f f f f f f f f 
@@ -1306,7 +1395,7 @@ forever(function () {
                 f 8 f f f f f f f f f f f f 8 f 
                 f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("F G F G F G F G ", 500)
             red(perplecat, img`
                 f f f f f f f f f f f f f f f f 
@@ -1325,7 +1414,7 @@ forever(function () {
                 f 2 f f f f f f f f f f f f 2 f 
                 f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("G A G A G A G A ", 500)
             blue(perplecat, img`
                 f f f f f f f f f f f f f f f f 
@@ -1344,7 +1433,7 @@ forever(function () {
                 f 8 f f f f f f f f f f f f 8 f 
                 f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("A B A B A B A B ", 500)
             red(perplecat, img`
                 f f f f f f f f f f f f f f f f 
@@ -1363,7 +1452,7 @@ forever(function () {
                 f 2 f f f f f f f f f f f f 2 f 
                 f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("B C5 B C5 B C5 B C5 ", 500)
             blue(perplecat, img`
                 f f f f f f f f f f f f f f f f 
@@ -1382,7 +1471,7 @@ forever(function () {
                 f 8 f f f f f f f f f f f f 8 f 
                 f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("A B A B A B A B ", 500)
             red(perplecat, img`
                 f f f f f f f f f f f f f f f f 
@@ -1401,7 +1490,7 @@ forever(function () {
                 f 2 f f f f f f f f f f f f 2 f 
                 f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("G A G A G A G A ", 500)
             blue(perplecat, img`
                 f f f f f f f f f f f f f f f f 
@@ -1420,7 +1509,7 @@ forever(function () {
                 f 8 f f f f f f f f f f f f 8 f 
                 f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("F G F G F G F G ", 500)
             red(perplecat, img`
                 f f f f f f f f f f f f f f f f 
@@ -1439,7 +1528,7 @@ forever(function () {
                 f 2 f f f f f f f f f f f f 2 f 
                 f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("E F E F E F E F ", 500)
             blue(perplecat, img`
                 f f f f f f f f f f f f f f f f 
@@ -1458,7 +1547,7 @@ forever(function () {
                 f 8 f f f f f f f f f f f f 8 f 
                 f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("D E D E D E D E ", 500)
             red(perplecat, img`
                 f f f f f f f f f f f f f f f f 
@@ -1477,7 +1566,7 @@ forever(function () {
                 f 2 f f f f f f f f f f f f 2 f 
                 f 2 2 2 2 2 2 2 2 2 2 2 2 2 2 f 
                 f f f f f f f f f f f f f f f f 
-                `, randint(6, 10), 100)
+                `, randint(6, 10), 100, true)
             music.playMelody("C D C D C D C D ", 500)
         }
         cunttilemapthingy = 11
@@ -1500,7 +1589,7 @@ forever(function () {
                 f 8 f f f f f f f f f f f f 8 f 
                 f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
                 f f f f f f f f f f f f f f f f 
-                `, cunttilemapthingy, 100)
+                `, cunttilemapthingy, 100, false)
             music.playTone(349, music.beat(BeatFraction.Half))
             pause(100)
         }
@@ -1524,7 +1613,7 @@ forever(function () {
                 f 8 f f f f f f f f f f f f 8 f 
                 f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
                 f f f f f f f f f f f f f f f f 
-                `, cunttilemapthingy, 100)
+                `, cunttilemapthingy, 100, false)
             music.playTone(349, music.beat(BeatFraction.Half))
             pause(100)
         }
@@ -1548,7 +1637,7 @@ forever(function () {
                 f 8 f f f f f f f f f f f f 8 f 
                 f 8 8 8 8 8 8 8 8 8 8 8 8 8 8 f 
                 f f f f f f f f f f f f f f f f 
-                `, cunttilemapthingy, 100)
+                `, cunttilemapthingy, 100, false)
             music.playTone(349, music.beat(BeatFraction.Half))
             pause(100)
         }

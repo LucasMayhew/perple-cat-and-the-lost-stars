@@ -134,6 +134,36 @@
         "mimeType": "image/x-mkcd-f4",
         "tilemapTile": true
     },
+    "tile27": {
+        "data": "hwQQABAAAAD/////////////////////iIj4iIj4///4+Pj4+Pj//4+P/4+P//////////////+IiPiIiPj4+Pj4+Pj4/4j4////iIj4//iIiPj///////j4+IiI+P////////////+P//+IiPj//4iI+P//////j////////////////////w==",
+        "mimeType": "image/x-mkcd-f4",
+        "tilemapTile": true
+    },
+    "tile28": {
+        "data": "hwQQABAAAACqqqqqqqqqqvr///////+v+v///////6/6////////r/r///////+v+v///////6/6////////r/r///////+v+v///////6/6////////r/r///////+v+v///////6/6////////r/r///////+v+v///////6+qqqqqqqqqqg==",
+        "mimeType": "image/x-mkcd-f4",
+        "tilemapTile": true
+    },
+    "tile29": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "tilemapTile": true
+    },
+    "tile30": {
+        "data": "hwQQABAAAABERERERERERPT///////9P9P///////0/0////////T/T///////9P9P///////0/0////////T/T///////9P9P///////0/0////////T/T///////9P9P///////0/0////////T/T///////9P9P///////09ERERERERERA==",
+        "mimeType": "image/x-mkcd-f4",
+        "tilemapTile": true
+    },
+    "tile31": {
+        "data": "hwQQABAAAACIiIiIiIiIiPj///////+P+P///////4/4////////j/j///////+P+P///////4/4////////j/j///////+P8v///////4/y////////L/L///////8v8v///////y/y////////L/L///////8v8v///////y8iIiIiIiIiIg==",
+        "mimeType": "image/x-mkcd-f4",
+        "tilemapTile": true
+    },
+    "tile32": {
+        "data": "hwQQABAAAAAiIiIiIiIiIvL///////8v8v///////y/y////////L/L///////8v8v///////y/y////////L/L///////8v+P///////4/4////////j/j///////+P+P///////4/4////////j/j///////+P+P///////4+IiIiIiIiIiA==",
+        "mimeType": "image/x-mkcd-f4",
+        "tilemapTile": true
+    },
     "level": {
         "id": "level",
         "mimeType": "application/mkcd-tilemap",
